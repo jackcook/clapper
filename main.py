@@ -1,135 +1,70 @@
+import pyupm_mic as microphone
+import requests
 import time
-import pyupm_mic as upmMicrophone
-from statistics import mean
-from datetime import datetime
-from threading import Timer
-import time
-def timeout():
-	print("Five Seconds Are Over")
-t=Timer(5,timeout)
-t.start()
+import pyupm_grove as grove
 
-myMic = upmMicrophone.Microphone(0)
-"""
-threshContext = upmMicrophone.thresholdContext()
+mic = microphone.Microphone(0)
+light = grove.GroveLight(3)
+temp = grove.GroveTemp(2)
+knob= grove.GroveRotary(1)
+
+threshContext = microphone.thresholdContext()
 threshContext.averageReading = 0
 threshContext.runningAverage = 0
 threshContext.averagedOver = 2
-"""
-def counting():
-  buffer = upmMicrophone.uint16Array(128)
-  length = myMic.getSampledWindow(2, 128, buffer)
-  if length:
-    thresh = myMic.findThreshold(threshContext, 30, buffer, length)
-    if thresh:
-      if average > 0 and thresh > average * 1.1 and not clap:
-        print("clap")
-        print average
-        clap = True
-      else:
-        clap = False
-  return clap
 
-def count():
-  y=counting()
-  x=0
-  if y==True:
-    x+=1
-    y=counting()
-  else:
-    pass
-  return x
-
-"""
-myTime=datetime.now()
-averageValues=[]
-theTime="it is %s o'clock %s minutes and %s seconds" %(myTime.hour,
-myTime.minute, myTime.second)
-print theTime
-"""
-myMic = upmMicrophone.Microphone(0)
-threshContext = upmMicrophone.thresholdContext()
-threshContext.averageReading = 0
-threshContext.runningAverage = 0
-threshContext.averagedOver = 2
-"""
 values = []
 average = 0
-clap = False"""
+clap = False
 
-while(1):
-  """ buffer = upmMicrophone.uint16Array(128)
-  length = myMic.getSampledWindow(2, 128, buffer)
-  if length:
-    thresh = myMic.findThreshold(threshContext, 30, buffer, length)
-    if thresh:
-      if average > 0 and thresh > average * 1.1 and not clap:
-        print("clap")
-        print average
-        clap = True
-      values.append(thresh)"""
-  x=counting()
-  if x==0:
-    print 'z'
-  elif x==1:
-    print 'a'
-  elif x==2:
-    print 'b'
-  elif x==3:
-    print 'c'
-  else:
-    print 'd'
-  x=0
+def read_sound_sensor():
+    global average, clap, values
 
+    buffer = microphone.uint16Array(128)
+    length = mic.getSampledWindow(2, 128, buffer)
+    if length:
+        thresh = mic.findThreshold(threshContext, 30, buffer, length)
+        print thresh
+        mic.printGraph(threshContext)
+        if thresh:
+            if average > 0 and thresh > average * 1.1 and not clap:
+                print "clap"
+                clap = True
+                try:
+                    requests.get("http://172.20.10.1:12345/clap")
+                except:
+                    pass
+            values.append(thresh)
+            if len(values) >= 2:
+                if values[-1] == values[-2]:
+                    print "threshold established: %d" % values[-1]
+                    average = values[-1]
+                    clap = False
 
-"""      if len(values) >= 5:
-        if values[-1] == values[-2] == values[-3] == values[-4] == 
-values[-5]:
-          print("threshold established: %d" % values[-1])
-          average = values[-1]
-          clap = False
-"""
-del myMic
+def read_light_sensor():
+    try:
+        requests.get("http://172.20.10.1:12345/light?n=%d" % light.value())
+    except:
+        pass
 
+def read_temp_sensor():
+    celcius=temp.value()
+    fahrenheit=celcius*9.0/5.0+32.0;
+    try:
+        requests.get("http://172.20.10.1:12345/temperature?n=%d" % 
+fahrenheit)
+    except:
+        pass
 
+def read_angled_sensor():
+    absdeg = int(knob.abs_deg())
+    try:
+        requests.get("http://172.20.10.1:12345/flash?n=%d" % absdeg)
+    except:
+        pass
 
-
-
-myTime=datetime.now()
-timeData=[]
-myTimeSeconds=myTime.second()
-#timeData.append(myTime.second)
-def average(values):
-   sum=0
-   count=0
-   for i in values:
-      sum+=int(i)
-      count+=1
-   mean=sum/count
-   print mean
-
-def findaverage():
-   values=[]
-   for i in range(0,10):
-      threshContent=upmMicrophone.thresholdContext()
-      values+=[threshContent]
-   #mymean=average(values)
-   return values
-
-myTime=dateTime.now()
-def ifclap():
-   mymean=findaverage()
-   count=0
-   while(1):
-      while myTime.second+3>myTime:
-         threshcontent=upmMicrophone.threshholdContext()
-         if threshcontent>=mymean*1.1:
-            clap=true
-         else:
-            pass
-         if clap==true:
-            count+=1
-         else:
-            pass
-   return count
-
+while 1:
+    read_sound_sensor()
+    read_light_sensor()
+    read_temp_sensor()
+    read_angled_sensor()
