@@ -5,6 +5,7 @@ import pyupm_grove as grove
 
 mic = microphone.Microphone(0)
 light = grove.GroveLight(3)
+temp = grove.GroveTemp(2)
 
 threshContext = microphone.thresholdContext()
 threshContext.averageReading = 0
@@ -47,17 +48,17 @@ def read_light_sensor():
         print "host is down"
 
     print "%s raw value is %d lux" % (light.name(), light.value())
-temp=grove.GroveTemp(2)
-print temp.name()
 
-for i in range(0,10):
+def read_temp_sensor():
     celcius=temp.value()
     fahrenheit=celcius*9.0/5.0+32.0;
     print "%d degrees Fahrenheit" % fahrenheit
-    
-del temp
+    try:
+        request.get("http://172.20.10.1:12345/temperature?n=%d" % fahrenheit)
+    except:
+        print "host is down"
 
 while 1:
     read_sound_sensor()
     read_light_sensor()
-  
+    read_temp_sensor()
