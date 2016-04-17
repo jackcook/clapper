@@ -42,13 +42,22 @@ def read_sound_sensor():
 
 def read_light_sensor():
     try:
-        requests.get("http://172.20.10.1:12345/light?n=%d" % clap)
+        requests.get("http://172.20.10.1:12345/light?n=%d" % light.value())
     except:
         print "host is down"
 
     print "%s raw value is %d lux" % (light.name(), light.value())
+temp=grove.GroveTemp(2)
+print temp.name()
+
+for i in range(0,10):
+    celcius=temp.value()
+    fahrenheit=celcius*9.0/5.0+32.0;
+    print "%d degrees Fahrenheit" % fahrenheit
+    
+del temp
 
 while 1:
     read_sound_sensor()
     read_light_sensor()
-
+  
