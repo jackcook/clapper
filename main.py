@@ -1,6 +1,6 @@
-from __future__ import print_function
 import time
 import pyupm_mic as upmMicrophone
+from statistics import mean
 
 myMic = upmMicrophone.Microphone(0)
 threshContext = upmMicrophone.thresholdContext()
@@ -30,3 +30,9 @@ while(1):
 
 del myMic
 
+"""average=[]
+count=0
+while  count<100:
+    average+=[thresh]
+    count+=1
+mean=mean(average)"""
