@@ -15,32 +15,29 @@ threshContext.averagedOver = 2
 
 values = []
 average = 0
-clap = 0
-last = 0
+clap = False
 
 def read_sound_sensor():
-    global average, clap, last, values
+    global average, clap, values
 
     buffer = microphone.uint16Array(128)
     length = mic.getSampledWindow(2, 128, buffer)
     if length:
         thresh = mic.findThreshold(threshContext, 30, buffer, length)
         if thresh:
-            if average > 0 and thresh > average * 1.1 and thresh > last:
-                clap += 1
-                print "claps: %d" % clap
+            if average > 0 and thresh > average * 1.1 and not clap:
+                print "clap"
+                clap = True
+                try:
+                    requests.get("http://172.20.10.1:12345/clap")
+                except:
+                    print "host is down"
             values.append(thresh)
             if len(values) >= 3:
                 if values[-1] == values[-2] == values[-3]:
-                    if clap > 0:
-                        try:
-                            requests.get("http://172.20.10.1:12345/clap?n=%d" % clap)
-                        except:
-                            print "host is down"
                     print "threshold established: %d" % values[-1]
                     average = values[-1]
-                    clap = 0
-        last = thresh
+                    clap = False
 
 def read_light_sensor():
     try:
