@@ -6,6 +6,7 @@ import pyupm_grove as grove
 mic = microphone.Microphone(0)
 light = grove.GroveLight(3)
 temp = grove.GroveTemp(2)
+knob= grove.GroveRotary(1)
 
 threshContext = microphone.thresholdContext()
 threshContext.averageReading = 0
@@ -58,7 +59,19 @@ def read_temp_sensor():
     except:
         print "host is down"
 
+def read_angled_sensor():
+    abs = knob.abs_value()
+    absdeg = knob.abs_deg()
+    absrad = knob.abs_rad()
+    rel = knob.rel_value()
+    reldeg = knob.rel_deg()
+    relrad = knoob.rel_rad()
+    print "Abs values: %4d" %int(abs), "raw %4d" % int(absdeg)
+    print "Rel values: %4d" %int(rel), "raw %4d" %int(reldeg)
+
+
 while 1:
     read_sound_sensor()
     read_light_sensor()
     read_temp_sensor()
+    read_angled_sensor()
