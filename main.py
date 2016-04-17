@@ -9,57 +9,13 @@ def timeout():
 t=Timer(5,timeout)
 t.start()
 
-
-"""
-myTime=datetime.now()
-averageValues=[]
-theTime="it is %s o'clock %s minutes and %s seconds" %(myTime.hour, 
-myTime.minute, myTime.second)
-print theTime
-
 myMic = upmMicrophone.Microphone(0)
+"""
 threshContext = upmMicrophone.thresholdContext()
 threshContext.averageReading = 0
 threshContext.runningAverage = 0
 threshContext.averagedOver = 2
-
-values = []
-average = 0
-clap = False"""
-
-while(1):
-  """ buffer = upmMicrophone.uint16Array(128)
-  length = myMic.getSampledWindow(2, 128, buffer)
-  if length:
-    thresh = myMic.findThreshold(threshContext, 30, buffer, length)
-    if thresh:
-      if average > 0 and thresh > average * 1.1 and not clap:
-        print("clap")
-        print average
-        clap = True
-      values.append(thresh)"""
-  x=counting()
-  if x==0:
-    return 'z'
-  elif x==1:
-    return 'a'
-  elif x==2:
-    return 'b'
-  elif x==3:
-    return 'c'
-  else:
-    return 'd'
-  x=0
-
-
-"""      if len(values) >= 5:
-        if values[-1] == values[-2] == values[-3] == values[-4] == values[-5]:
-          print("threshold established: %d" % values[-1])
-          average = values[-1]
-          clap = False
 """
-del myMic
-
 def counting():
   buffer = upmMicrophone.uint16Array(128)
   length = myMic.getSampledWindow(2, 128, buffer)
@@ -83,6 +39,59 @@ def count():
   else:
     pass
   return x
+
+"""
+myTime=datetime.now()
+averageValues=[]
+theTime="it is %s o'clock %s minutes and %s seconds" %(myTime.hour,
+myTime.minute, myTime.second)
+print theTime
+"""
+myMic = upmMicrophone.Microphone(0)
+threshContext = upmMicrophone.thresholdContext()
+threshContext.averageReading = 0
+threshContext.runningAverage = 0
+threshContext.averagedOver = 2
+"""
+values = []
+average = 0
+clap = False"""
+
+while(1):
+  """ buffer = upmMicrophone.uint16Array(128)
+  length = myMic.getSampledWindow(2, 128, buffer)
+  if length:
+    thresh = myMic.findThreshold(threshContext, 30, buffer, length)
+    if thresh:
+      if average > 0 and thresh > average * 1.1 and not clap:
+        print("clap")
+        print average
+        clap = True
+      values.append(thresh)"""
+  x=counting()
+  if x==0:
+    print 'z'
+  elif x==1:
+    print 'a'
+  elif x==2:
+    print 'b'
+  elif x==3:
+    print 'c'
+  else:
+    print 'd'
+  x=0
+
+
+"""      if len(values) >= 5:
+        if values[-1] == values[-2] == values[-3] == values[-4] == 
+values[-5]:
+          print("threshold established: %d" % values[-1])
+          average = values[-1]
+          clap = False
+"""
+del myMic
+
+
 
 
 
@@ -111,7 +120,7 @@ myTime=dateTime.now()
 def ifclap():
    mymean=findaverage()
    count=0
-   while(1):      
+   while(1):
       while myTime.second+3>myTime:
          threshcontent=upmMicrophone.threshholdContext()
          if threshcontent>=mymean*1.1:
@@ -123,6 +132,4 @@ def ifclap():
          else:
             pass
    return count
-
-
 
