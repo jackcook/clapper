@@ -31,7 +31,7 @@ def read_sound_sensor():
                 try:
                     requests.get("http://172.20.10.1:12345/clap")
                 except:
-                    print "host is down"
+                    pass
             values.append(thresh)
             if len(values) >= 3:
                 if values[-1] == values[-2] == values[-3]:
@@ -43,29 +43,23 @@ def read_light_sensor():
     try:
         requests.get("http://172.20.10.1:12345/light?n=%d" % light.value())
     except:
-        print "host is down"
-
-    print "%s raw value is %d lux" % (light.name(), light.value())
+        pass
 
 def read_temp_sensor():
     celcius=temp.value()
     fahrenheit=celcius*9.0/5.0+32.0;
-    print "%d degrees Fahrenheit" % fahrenheit
     try:
-        request.get("http://172.20.10.1:12345/temperature?n=%d" % fahrenheit)
+        requests.get("http://172.20.10.1:12345/temperature?n=%d" % 
+fahrenheit)
     except:
-        print "host is down"
+        pass
 
 def read_angled_sensor():
-    abs = knob.abs_value()
-    absdeg = knob.abs_deg()
-    absrad = knob.abs_rad()
-    rel = knob.rel_value()
-    reldeg = knob.rel_deg()
-    relrad = knoob.rel_rad()
-    print "Abs values: %4d" %int(abs), "raw %4d" % int(absdeg)
-    print "Rel values: %4d" %int(rel), "raw %4d" %int(reldeg)
-
+    absdeg = int(knob.abs_deg())
+    try:
+        requests.get("http://172.20.10.1:12345/flash?n=%d" % absdeg)
+    except:
+        pass
 
 while 1:
     read_sound_sensor()
